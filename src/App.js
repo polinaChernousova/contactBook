@@ -1,23 +1,65 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import AddContact from "./Components/AddContact";
+import ContactCard from "./Components/ContactCard";
+import ContactList from "./Components/ContactList";
 
 function App() {
+  let [allContacts, setAllContacts] = useState([]);
+  let [modal, setModal] = useState(false);
+  let [editTodo, setEditTodo] = useState({});
+
+  function addContact(newContact) {
+    setAllContacts([...allContacts, newContact]);
+  }
+
+  function deleteContact(id) {
+    let arr = [...allContacts];
+    arr = arr.filter((item) => {
+      return item.id !== id;
+    });
+    setAllContacts(arr);
+  }
+  // console.log(allContacts);
+  //
+  //
+  //
+  //
+  //
+  function editContact(index) {
+    setModal(true);
+    setEditTodo(allContacts[index]); // передала все данные в edit
+  }
+
+  function handleSaveContact(newContact) {
+    let newArr = allContacts.map((item) => {
+      if (item.id === newContact.id) {
+        return newContact;
+      }
+      return item;
+    });
+    setAllContacts(newArr);
+    handleCloseModal();
+  }
+  function handleCloseModal() {
+    setModal(false);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <AddContact addContact={addContact} />
+      <ContactList
+        allContacts={allContacts}
+        deleteContact={deleteContact}
+        editContact={editContact}
+        handleCloseModal={handleCloseModal}
+      />{" "}
+      {modal ? (
+        <ContactCard
+          allContacts={allContacts}
+          editTodo={editTodo}
+          handleSaveContact={handleSaveContact}
+        />
+      ) : null}
     </div>
   );
 }
